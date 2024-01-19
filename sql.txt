@@ -1,0 +1,97 @@
+CREATE DATABASE tienda;
+
+CREATE TABLE usuarios(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(50),
+    Apellido vARCHAR(50),
+    Edad INT,
+    Email VARCHAR(100),
+    Contraseña VARCHAR(10),
+    Rol VARCHAR(50),
+    fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaActualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO usuarios(Nombre, Apellido, Edad, Email, Contraseña, Rol) VALUES
+
+    ('María','Ollarves', 27, 'mariaollarves@gmail.com', '1527947356', 'admin'),
+    ('Luis','Perez', 40, 'luisperez@gmail.com','1234567890', 'cliente'),
+    ('Franklin','Cabello', 23, 'franklincabello@gmail.com','9845612345', 'cliente'),
+    ('Coromoto','Cardozo', 50, 'coromotocardozo@gmail.com','3894097638', 'cliente'),
+    ('Amarylis','Salazar', 28, 'amasalazar@gmail.com','0935682536', 'cliente');
+
+CREATE TABLE categoria(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(50),
+    Tipo VARCHAR(50),
+    fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaActualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO categoria (Nombre, Tipo) VALUES
+
+    ('Ropa','Casual'),
+    ('Ropa','Formal'),
+    ('Zapatos','Casual'),
+    ('Zapatos', 'Formal'),
+    ('Accesorios', 'Sombrero'),
+    ('Accesorios', 'Joyería');
+
+CREATE TABLE producto(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_producto VARCHAR(50),
+    precio FLOAT,
+    stock INT,
+    nombre_categoria VARCHAR(50),
+    categoria_id INT,
+    fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaActualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+);
+
+INSERT INTO producto (nombre_producto, precio, stock, nombre_categoria, categoria_id) VALUES
+
+    ('Camisa', 15, 100, Ropa, 1),
+    ('Pantalón', 20, 200, Ropa, 2),
+    ('Botas', 150, 50, Zapatos, 3),
+    ('Mocasines', 25, 20, Zapatos, 4),
+    ('Gorra', 5, 250, Accesorios, 5),
+    ('Gorro tipo pescador', 8, 70, Accesorios, 5),
+    ('Collar', 4, 0, Accesorios, 6);
+
+CREATE TABLE ventas(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT,
+    usuario_id INT,
+    cantidad INT,
+    precio_total FLOAT,
+    fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaActualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (producto_id) REFERENCES producto(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+INSERT INTO ventas (producto_id, usuario_id, cantidad, precio_total) VALUES
+
+    (1, 2 , 2, 30),
+    (2, 3, 1, 20),
+    (2, 3, 1, 20),
+    (5, 4, 1, 5),
+    (3, 5, 2, 300),
+    (6, 2, 1, 8),
+    (4, 3, 1, 25),
+    (5, 4, 5, 20),
+    (1, 3, 2, 30),
+    (2, 5, 3, 60);
+
+--- Consultas aplicadas ---
+
+1. SELECT * FROM usuarios WHERE rol = 'admin';
+
+2. SELECT id, nombre_producto, stock FROM producto;
+
+3. SELECT usuario_id, SUM(precio_total) AS total_ventas FROM ventas GROUP BY usuario_id;
+
+4. UPDATE producto SET precio = precio * 0.9 WHERE precio > 100;
+
+5. DELETE FROM ventas WHERE producto_id IN (SELECT id FROM producto WHERE stock = 0);
